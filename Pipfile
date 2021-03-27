@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 flask = {version = "*", index = "https://pypi.mirrors.ustc.edu.cn"}
+flask-restful = "*"
+pymysql = "*"
 
 [dev-packages]
 
