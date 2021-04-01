@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 
-from app.db.util import clear_data, get_count
+from app.db.util import get_count
 from app.service.sample import sample_to_promote, sample_delete, sample_list, sample_modify
 
 
@@ -24,25 +24,22 @@ class SampleListView(Resource):
 
     # 修改资源
     def post(self):
-        celebrity = {}
-        sample = {}
-        celebrity['c_id'] = self.parser.parse_args()['c_id']
-        celebrity['website'] = self.parser.parse_args()['website']
-        celebrity['celebrityname'] = self.parser.parse_args()['celebrityname']
-        celebrity['email'] = self.parser.parse_args()['email']
-        sample['s_product'] = self.parser.parse_args()['s_product']
-        sample['country'] = self.parser.parse_args()['country']
-        sample['state'] = self.parser.parse_args()['state']
-        sample['city'] = self.parser.parse_args()['city']
-        sample['address'] = self.parser.parse_args()['address']
-        sample['phone'] = self.parser.parse_args()['phone']
-        sample['postcode'] = self.parser.parse_args()['postcode']
-        sample['s_order'] = self.parser.parse_args()['s_order']
-        sample['sample_date'] = self.parser.parse_args()['sample_date']
+        data = {}
+        data['c_id'] = self.parser.parse_args()['c_id']
+        data['website'] = self.parser.parse_args()['website']
+        data['celebrityname'] = self.parser.parse_args()['celebrityname']
+        data['email'] = self.parser.parse_args()['email']
+        data['s_product'] = self.parser.parse_args()['s_product']
+        data['country'] = self.parser.parse_args()['country']
+        data['state'] = self.parser.parse_args()['state']
+        data['city'] = self.parser.parse_args()['city']
+        data['address'] = self.parser.parse_args()['address']
+        data['phone'] = self.parser.parse_args()['phone']
+        data['postcode'] = self.parser.parse_args()['postcode']
+        data['s_order'] = self.parser.parse_args()['s_order']
+        data['sample_date'] = self.parser.parse_args()['sample_date']
 
-        celebrity = clear_data(celebrity)
-        sample = clear_data(sample)
-        flag = sample_modify(celebrity, sample)
+        flag = sample_modify(data)
         if flag is False:
             return {"code": 404, "msg": "【更新寄样中信息】失败"}
         else:
