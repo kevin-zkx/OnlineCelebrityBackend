@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 
-from app.db.util import clear_data, get_count
+from app.db.util import get_count
 from app.service.promote import promote_modify, promote_list, promote_delete
 
 
@@ -24,34 +24,33 @@ class PromoteListView(Resource):
         self.parser.add_argument('product_cost', type=str, location='form')
         self.parser.add_argument('transfer_cost', type=str, location='form')
         self.parser.add_argument('url', type=str, location='form')
-        self.parser.add_argument('join_league', type=int, location='form')
+        self.parser.add_argument('join_league', type=str, location='form')
         super(PromoteListView, self).__init__()
 
     # 修改资源
     def post(self):
-        celebrity = {}
-        promote = {}
-        celebrity['c_id'] = self.parser.parse_args()['c_id']
-        celebrity['website'] = self.parser.parse_args()['website']
-        celebrity['star'] = self.parser.parse_args()['star']
-        celebrity['as_score'] = self.parser.parse_args()['as_score']
-        celebrity['celebrityname'] = self.parser.parse_args()['celebrityname']
-        celebrity['email'] = self.parser.parse_args()['email']
-        celebrity['youtube'] = self.parser.parse_args()['youtube']
-        celebrity['youtube_star'] = self.parser.parse_args()['youtube_star']
-        celebrity['facebook'] = self.parser.parse_args()['facebook']
-        celebrity['ins'] = self.parser.parse_args()['ins']
-        promote['p_way'] = self.parser.parse_args()['p_way']
-        promote['p_remark'] = self.parser.parse_args()['p_remark']
-        promote['p_principal'] = self.parser.parse_args()['p_principal']
-        promote['p_product'] = self.parser.parse_args()['p_product']
-        promote['product_cost'] = self.parser.parse_args()['product_cost']
-        promote['transfer_cost'] = self.parser.parse_args()['transfer_cost']
-        promote['url'] = self.parser.parse_args()['url']
-        promote['join_league'] = self.parser.parse_args()['join_league']
-        celebrity = clear_data(celebrity)
-        promote = clear_data(promote)
-        flag = promote_modify(celebrity, promote)
+        data = {}
+        data['c_id'] = self.parser.parse_args()['c_id']
+        data['website'] = self.parser.parse_args()['website']
+        data['star'] = self.parser.parse_args()['star']
+        data['as_score'] = self.parser.parse_args()['as_score']
+        data['celebrityname'] = self.parser.parse_args()['celebrityname']
+        data['email'] = self.parser.parse_args()['email']
+        data['youtube'] = self.parser.parse_args()['youtube']
+        data['youtube_star'] = self.parser.parse_args()['youtube_star']
+        data['facebook'] = self.parser.parse_args()['facebook']
+        data['ins'] = self.parser.parse_args()['ins']
+
+        data['p_way'] = self.parser.parse_args()['p_way']
+        data['p_remark'] = self.parser.parse_args()['p_remark']
+        data['p_principal'] = self.parser.parse_args()['p_principal']
+        # data['p_product'] = self.parser.parse_args()['p_product']
+        data['product_cost'] = self.parser.parse_args()['product_cost']
+        data['transfer_cost'] = self.parser.parse_args()['transfer_cost']
+        data['url'] = self.parser.parse_args()['url']
+        data['join_league'] = self.parser.parse_args()['join_league']
+
+        flag = promote_modify(data)
         if flag is False:
             return {"code": 404, "msg": "【更新已合作信息】失败"}
         else:

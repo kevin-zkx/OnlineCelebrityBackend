@@ -37,30 +37,35 @@ def develop_list():
         develop["addtime"] = develop["addtime"].strftime("%Y-%m-%d %H:%M:%S")
     return develop_list
 
-def develop_modify(data_1, data_2):
+def develop_modify(data):
     db = SQLManager()
 
-    table_1 = 'celebrity'
-    table_2 = 'develop'
-    condition_1 = ('celebrityid', data_1['c_id'])  # 更新所需条件
-    condition_2 = ('c_id', data_1['c_id'])  # 更新所需条件
-    del data_1['c_id']
-    # 数据要划分为cerebrity和develop两张表的字段再更新数据
-    sql1 = ""
-    sql2 = ""
-    if(data_1):
-        sql1 = db.get_update_sql(table_1, data_1, condition_1)
-    if(data_2):
-        sql2 = db.get_update_sql(table_2, data_2, condition_2)
-    # 这里应该有问题，如果result_1为False，result_2为True，怎么办
-    if(sql1):
-        result_1 = db.modify(sql1)
-        flag = result_1 == 1
-    if(sql2):
-        result_2 = db.modify(sql2)
-        flag = result_2 == 1
+    sql = "update celebrity,develop \
+            set website=%r,star=%r,as_score=%r,celebrityname=%r,email=%r,youtube=%r,youtube_star=%r,facebook=%r,ins=%r,\
+            d_way=%r,d_remark=%r,d_principal=%r\
+            where celebrity.celebrityid=develop.c_id\
+            and c_id=%d" % ( \
+        data['website'], \
+        data['star'], \
+        data['as_score'], \
+        data['celebrityname'], \
+        data['email'], \
+        data['youtube'], \
+        data['youtube_star'], \
+        data['facebook'], \
+        data['ins'], \
+        data['d_way'], \
+        data['d_remark'], \
+        data['d_principal'], \
+        data['c_id']
+    )
+    flag = False
+    if(data):
+        result = db.modify(sql)
+        flag = result is not 0
     db.close()
     return flag
+
 
 def develop_delete(id):
     db = SQLManager()
