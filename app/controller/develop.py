@@ -1,7 +1,8 @@
 from flask_restful import Resource, reqparse
 
 from app.db.util import clear_data, get_count
-from app.service.develop import develop_add, develop_list, develop_delete, develop_to_cooperation, develop_modify
+from app.service.develop import develop_add, develop_list, develop_delete, develop_to_cooperation, develop_modify, \
+    develop_search
 
 
 class DevelopListView(Resource):
@@ -9,12 +10,12 @@ class DevelopListView(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('website', type=str, location='form')
-        self.parser.add_argument('star', type=int, location='form')
-        self.parser.add_argument('as_score', type=int, location='form')
+        self.parser.add_argument('star', type=str, location='form')
+        self.parser.add_argument('as_score', type=str, location='form')
         self.parser.add_argument('celebrityname', type=str, location='form')
         self.parser.add_argument('email', type=str, location='form')
         self.parser.add_argument('youtube', type=str, location='form')
-        self.parser.add_argument('youtube_star', type=int, location='form')
+        self.parser.add_argument('youtube_star', type=str, location='form')
         self.parser.add_argument('facebook', type=str, location='form')
         self.parser.add_argument('ins', type=str, location='form')
         self.parser.add_argument('d_way', type=str, location='form')
@@ -49,7 +50,6 @@ class DevelopListView(Resource):
 
     # 查询所有数据
     def get(self):
-        # return {"code": 200, "test": "test_list"}
         return {"code": 0, "msg": "【查询待开发信息】成功", "count": get_count("develop", "d_display"), "data": develop_list()}
 
 class DevelopView(Resource):
@@ -58,12 +58,12 @@ class DevelopView(Resource):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument('c_id', type=int, location='form')
         self.parser.add_argument('website', type=str, location='form')
-        self.parser.add_argument('star', type=int, location='form')
-        self.parser.add_argument('as_score', type=int, location='form')
+        self.parser.add_argument('star', type=str, location='form')
+        self.parser.add_argument('as_score', type=str, location='form')
         self.parser.add_argument('celebrityname', type=str, location='form')
         self.parser.add_argument('email', type=str, location='form')
         self.parser.add_argument('youtube', type=str, location='form')
-        self.parser.add_argument('youtube_star', type=int, location='form')
+        self.parser.add_argument('youtube_star', type=str, location='form')
         self.parser.add_argument('facebook', type=str, location='form')
         self.parser.add_argument('ins', type=str, location='form')
         self.parser.add_argument('d_way', type=str, location='form')
@@ -73,25 +73,22 @@ class DevelopView(Resource):
 
     # 修改资源
     def post(self):
-        celebrity = {}
-        develop = {}
-        celebrity['c_id'] = self.parser.parse_args()['c_id']
-        celebrity['website'] = self.parser.parse_args()['website']
-        celebrity['star'] = self.parser.parse_args()['star']
-        celebrity['as_score'] = self.parser.parse_args()['as_score']
-        celebrity['celebrityname'] = self.parser.parse_args()['celebrityname']
-        celebrity['email'] = self.parser.parse_args()['email']
-        celebrity['youtube'] = self.parser.parse_args()['youtube']
-        celebrity['youtube_star'] = self.parser.parse_args()['youtube_star']
-        celebrity['facebook'] = self.parser.parse_args()['facebook']
-        celebrity['ins'] = self.parser.parse_args()['ins']
-        develop['d_way'] = self.parser.parse_args()['d_way']
-        develop['d_remark'] = self.parser.parse_args()['d_remark']
-        develop['d_principal'] = self.parser.parse_args()['d_principal']
+        data = {}
+        data['c_id'] = self.parser.parse_args()['c_id']
+        data['website'] = self.parser.parse_args()['website']
+        data['star'] = self.parser.parse_args()['star']
+        data['as_score'] = self.parser.parse_args()['as_score']
+        data['celebrityname'] = self.parser.parse_args()['celebrityname']
+        data['email'] = self.parser.parse_args()['email']
+        data['youtube'] = self.parser.parse_args()['youtube']
+        data['youtube_star'] = self.parser.parse_args()['youtube_star']
+        data['facebook'] = self.parser.parse_args()['facebook']
+        data['ins'] = self.parser.parse_args()['ins']
+        data['d_way'] = self.parser.parse_args()['d_way']
+        data['d_remark'] = self.parser.parse_args()['d_remark']
+        data['d_principal'] = self.parser.parse_args()['d_principal']
 
-        celebrity = clear_data(celebrity)
-        develop = clear_data(develop)
-        flag = develop_modify(celebrity, develop)
+        flag = develop_modify(data)
         if flag is False:
             return {"code": 404, "msg": "【更新待开发信息】失败"}
         else:
@@ -123,3 +120,32 @@ class Develop_to_Cooperation(Resource):
             return {"code": 404, "msg": "【待开发-->待合作】转移失败"}
         else:
             return {"code": 200, "msg": "【待开发-->待合作】转移成功"}
+
+class Develop_Search(Resource):
+
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('celebrityname', type=str, location='json')
+        self.parser.add_argument('email', type=str, location='json')
+        self.parser.add_argument('celebrityid', type=int, location='json')
+        self.parser.add_argument('website', type=str, location='json')
+        self.parser.add_argument('youtube', type=str, location='json')
+        super(Develop_Search, self).__init__()
+
+    def get(self):
+        data = {}
+        data['celebrityname'] = self.parser.parse_args()['celebrityname']
+        data['email'] = self.parser.parse_args()['email']
+        data['celebrityid'] = self.parser.parse_args()['celebrityid']
+        data['website'] = self.parser.parse_args()['website']
+        data['youtube'] = self.parser.parse_args()['youtube']
+        # flag = develop_search(clear_data(data))
+        print(self.parser.parse_args())
+        print("data")
+        print(data)
+        print(clear_data(data))
+        print("data")
+        # if flag is False:
+        #     return {"code": 404, "msg": "未查找到符合条件网红"}
+        # else:
+        #     return {"code": 200, "msg": "已查找到符合条件网红", "count": len(flag), "data": flag}

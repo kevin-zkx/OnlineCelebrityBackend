@@ -14,8 +14,6 @@ class UserView(Resource):
     def post(self):
         email = self.parser.parse_args()["email"]
         password = self.parser.parse_args()["password"]
-        # print(email)
-        # print(password)
         data = user_login(email, password)
         if data is False:
             return {"code": 404, "msg": "登录失敗"}
@@ -36,16 +34,12 @@ class UserAuthsView(Resource):
     def post(self):
         userid = self.parser.parse_args()["userid"]
         auths = self.parser.parse_args()["auths"]
-        # print(userid)
-        # print(auths)
 
         data = user_auths_modify(userid, auths)
-        # print(data)
         if data is False:
             return {"code": 404, "msg": "登录失敗"}
         else:
             return {"code": 200, "msg": "登录成功", "count": 2}
-        # return {"code": 200, "msg": "成功", "count": 7}
 
     def delete(self):
         id = self.parser.parse_args()['userid']

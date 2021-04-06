@@ -25,7 +25,6 @@ def user_list():
 def user_auths_modify(userid, auths):
     db = SQLManager()
     sql = "update user set auths=%d where userid=%d" % (auths, userid)
-    # print(sql)
     flag = False
     if (sql):
         result = db.modify(sql)
@@ -43,5 +42,3 @@ def user_delete(id):
         return False
     else:
         return True
-# flag = user_auths_modify(2, 5)
-# print(flag)

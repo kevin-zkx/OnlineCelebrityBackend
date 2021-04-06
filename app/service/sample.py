@@ -11,38 +11,40 @@ def sample_list():
             sample["sample_date"] = sample["sample_date"].strftime("%Y-%m-%d %H:%M:%S")
     return sample_list
 
-def sample_modify(data_1, data_2):
+def sample_modify(data):
     db = SQLManager()
 
-    table_1 = 'celebrity'
-    table_2 = 'sample'
-    condition_1 = ('celebrityid', data_1['c_id'])  # 更新所需条件
-    condition_2 = ('c_id', data_1['c_id'])  # 更新所需条件
-    del data_1['c_id']
-    # 数据要划分为cerebrity和develop两张表的字段再更新数据
-    sql1 = ""
-    sql2 = ""
-    if(data_1):
-        sql1 = db.get_update_sql(table_1, data_1, condition_1)
-        print(sql1)
-    if(data_2):
-        sql2 = db.get_update_sql(table_2, data_2, condition_2)
-        print(sql2)
-    # 这里应该有问题，如果result_1为False，result_2为True，怎么办
-    if(sql1):
-        result_1 = db.modify(sql1)
-        flag = result_1 == 1
-    if(sql2):
-        result_2 = db.modify(sql2)
-        flag = result_2 == 1
+    sql = "update celebrity,sample \
+                set website=%r,celebrityname=%r,email=%r,\
+                s_product=%r,country=%r,state=%r,city=%r,address=%r,phone=%r,postcode=%r,s_order=%r,sample_date=%r\
+                where celebrity.celebrityid=sample.c_id\
+                and c_id=%d" % ( \
+        data['website'], \
+        data['celebrityname'], \
+        data['email'], \
+        data['s_product'], \
+        data['country'], \
+        data['state'], \
+        data['city'], \
+        data['address'], \
+        data['phone'], \
+        data['postcode'], \
+        data['s_order'], \
+        data['sample_date'], \
+        data['c_id']
+    )
+    flag = False
+    if (data):
+        result = db.modify(sql)
+        flag = result is not 0
     db.close()
     return flag
 
 def sample_delete(id):
     db = SQLManager()
+
     sql1 = "delete from sample where c_id=%d" % id
     sql2 = "update cooperation set c_status=0,c_display=1 where c_id=%d" % id
-    # 这里应该有判断
     result1 = db.modify(sql1)
     if result1 == 0:
         return False
@@ -57,12 +59,14 @@ def sample_to_promote(id):
     db = SQLManager()
     sql1 = "select c_id,sign_for,s_display,s_product from sample where c_id=%d" % id
     sql2 = "update sample set sign_for=1,s_display=0 where c_id=%d" % id
-
     result = db.get_one(sql1)
     if result is not None:
         if result['sign_for'] == 1 and result['s_display'] == 0:
             return False
-        sql3 = "insert into promote(c_id,p_product) values(%d, %r)" % (id,result['s_product'])
+        if result['s_product'] is None:
+            sql3 = "insert into promote(c_id) values(%d)" % id
+        else:
+            sql3 = "insert into promote(c_id,p_product) values(%d, %r)" % (id,result['s_product'])
         db.modify(sql2)
         db.create(sql3)
         db.close()

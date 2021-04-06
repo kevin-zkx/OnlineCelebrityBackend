@@ -11,30 +11,34 @@ def cooperation_list():
             cooperation["addtime"] = cooperation["addtime"].strftime("%Y-%m-%d %H:%M:%S")
     return cooperation_list
 
-def cooperation_modify(data_1, data_2):
+def cooperation_modify(data):
     db = SQLManager()
 
-    table_1 = 'celebrity'
-    table_2 = 'cooperation'
-    condition_1 = ('celebrityid', data_1['c_id'])  # 更新所需条件
-    condition_2 = ('c_id', data_1['c_id'])  # 更新所需条件
-    del data_1['c_id']
-    # 数据要划分为cerebrity和develop两张表的字段再更新数据
-    sql1 = ""
-    sql2 = ""
-    if(data_1):
-        sql1 = db.get_update_sql(table_1, data_1, condition_1)
-        print(sql1)
-    if(data_2):
-        sql2 = db.get_update_sql(table_2, data_2, condition_2)
-        print(sql2)
-    # 这里应该有问题，如果result_1为False，result_2为True，怎么办
-    if(sql1):
-        result_1 = db.modify(sql1)
-        flag = result_1 == 1
-    if(sql2):
-        result_2 = db.modify(sql2)
-        flag = result_2 == 1
+    sql = "update celebrity,cooperation \
+                set website=%r,star=%r,as_score=%r,celebrityname=%r,email=%r,youtube=%r,youtube_star=%r,facebook=%r,ins=%r,\
+                c_way=%r,c_remark=%r,c_principal=%r,c_channel=%r,addtime=%r\
+                where celebrity.celebrityid=cooperation.c_id\
+                and c_id=%d" % ( \
+        data['website'], \
+        data['star'], \
+        data['as_score'], \
+        data['celebrityname'], \
+        data['email'], \
+        data['youtube'], \
+        data['youtube_star'], \
+        data['facebook'], \
+        data['ins'], \
+        data['c_way'], \
+        data['c_remark'], \
+        data['c_principal'], \
+        data['c_channel'], \
+        data['addtime'], \
+        data['c_id']
+    )
+    flag = False
+    if (data):
+        result = db.modify(sql)
+        flag = result is not 0
     db.close()
     return flag
 
