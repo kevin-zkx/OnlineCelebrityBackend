@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app.db.base_mysql import SQLManager
+from app.db.util import clear_data
 
 
 def develop_add(data_1, data_2):
@@ -66,7 +67,6 @@ def develop_modify(data):
     db.close()
     return flag
 
-
 def develop_delete(id):
     db = SQLManager()
     sql1 = "delete from develop where c_id=%d" % id
@@ -98,3 +98,20 @@ def develop_to_cooperation(id):
         return True
     else:
         return False
+
+def develop_search(data):
+    db = SQLManager()
+
+    sql = db.get_search_sql("v_develop", data)
+    print(sql)
+    result = db.get_list(sql)
+    print(result)
+    db.close()
+    if not result:
+        return False
+    else:
+        return result
+
+# condition = {"celebrityname":"jack","email":"","celebrityid":"","website":"","youtube":""}
+# flag = develop_search(condition)
+# print(len(flag))

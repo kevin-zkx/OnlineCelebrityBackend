@@ -1,7 +1,8 @@
 from flask_restful import Resource, reqparse
 
 from app.db.util import clear_data, get_count
-from app.service.develop import develop_add, develop_list, develop_delete, develop_to_cooperation, develop_modify
+from app.service.develop import develop_add, develop_list, develop_delete, develop_to_cooperation, develop_modify, \
+    develop_search
 
 
 class DevelopListView(Resource):
@@ -119,3 +120,32 @@ class Develop_to_Cooperation(Resource):
             return {"code": 404, "msg": "【待开发-->待合作】转移失败"}
         else:
             return {"code": 200, "msg": "【待开发-->待合作】转移成功"}
+
+class Develop_Search(Resource):
+
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('celebrityname', type=str, location='json')
+        self.parser.add_argument('email', type=str, location='json')
+        self.parser.add_argument('celebrityid', type=int, location='json')
+        self.parser.add_argument('website', type=str, location='json')
+        self.parser.add_argument('youtube', type=str, location='json')
+        super(Develop_Search, self).__init__()
+
+    def get(self):
+        data = {}
+        data['celebrityname'] = self.parser.parse_args()['celebrityname']
+        data['email'] = self.parser.parse_args()['email']
+        data['celebrityid'] = self.parser.parse_args()['celebrityid']
+        data['website'] = self.parser.parse_args()['website']
+        data['youtube'] = self.parser.parse_args()['youtube']
+        # flag = develop_search(clear_data(data))
+        print(self.parser.parse_args())
+        print("data")
+        print(data)
+        print(clear_data(data))
+        print("data")
+        # if flag is False:
+        #     return {"code": 404, "msg": "未查找到符合条件网红"}
+        # else:
+        #     return {"code": 200, "msg": "已查找到符合条件网红", "count": len(flag), "data": flag}

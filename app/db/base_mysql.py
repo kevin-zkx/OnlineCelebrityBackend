@@ -41,6 +41,13 @@ class SQLManager(object):
 		self.conn.commit()
 		return result
 
+	def get_search_sql(self, table_name, condition):
+		# for v in list(condition.keys()):
+		# 	if condition[v] == "" or condition[v] is None:
+		# 		del condition[v]
+		sql = 'select * from %s' % table_name + ' where ' + " and ".join(["%s like '%%%s%%'" % (k, condition[k]) for k in condition])
+		return sql
+
 	def get_update_sql(self, table_name, data, condition):
 		# 自动构造update语句
 		sql = 'UPDATE %s SET ' % table_name + ','.join(['%s=%r' % (k, data[k]) for k in data]) + ' WHERE %s=%r;' % (condition[0], condition[1])
@@ -59,6 +66,12 @@ class SQLManager(object):
 		self.conn.commit()
 		return result
 
+	def count(self, table_name):
+		sql = 'select count(*) as count from %s' % table_name
+		self.cursor.execute(sql)
+		result = self.cursor.fetchone()
+		self.conn.commit()
+		return result
 
 	# 我如果要批量执行多个创建操作，虽然只建立了一次数据库连接但是还是会多次提交，可不可以改成一次连接，
 	# 一次提交呢？
